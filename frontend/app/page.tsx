@@ -235,7 +235,7 @@ const SetFlowOptimizer = () => {
               </Button>
             </TabsContent>
             <TabsContent value="manual">
-              <div className="p-4">
+              <div className="p4 mb-4 border p-4 rounded">
                 <h1 className="text-xl font-bold mb-4">
                   Dynamic Performance Form
                 </h1>
