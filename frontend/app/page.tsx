@@ -12,11 +12,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { stringify } from "querystring";
 
 const SetFlowOptimizer = () => {
   const [size, setSize] = useState(3);
   const [costs, setCosts] = useState(Array(3).fill(Array(3).fill(0)));
   const [result, setResult]: any = useState(null);
+  const [performancesName, setPerformancesName] = useState(
+    Array.from({ length: 3 }, (_, index) => `Performance ${index + 1}`)
+  );
+
+  console.log(performancesName);
 
   // console.log(costs);
 
@@ -24,6 +30,15 @@ const SetFlowOptimizer = () => {
     const newSize = parseInt(e.target.value) || 3;
     setSize(newSize);
     setCosts(Array(newSize).fill(Array(newSize).fill(0)));
+    setPerformancesName(
+      Array.from({ length: newSize }, (_, index) => `Performance ${index + 1}`)
+    );
+  };
+
+  const handlePerformancesNameChange = (e: any, row: any) => {
+    const newPerformancesName = [...performancesName];
+    newPerformancesName[row] = e.target.value;
+    setPerformancesName(newPerformancesName);
   };
 
   const handleCostChange = (row: any, col: any, value: any) => {
@@ -54,7 +69,10 @@ const SetFlowOptimizer = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ costs }),
+        body: JSON.stringify({
+          performancesName: performancesName,
+          costs: costs,
+        }),
       });
 
       const data = await response.json();
@@ -85,27 +103,36 @@ const SetFlowOptimizer = () => {
             </label>
           </div>
 
+          {/* 演目の被り人数の入力欄 */}
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>From / To</TableHead>
                   {[...Array(size)].map((_, i) => (
-                    <TableHead key={i}>Performance {i + 1}</TableHead>
+                    <TableHead key={i}>{performancesName[i]}</TableHead>
                   ))}
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {[...Array(size)].map((_, row) => (
                   <TableRow key={row}>
-                    <TableCell>Performance {row + 1}</TableCell>
+                    <TableCell>
+                      <Input
+                        type="text"
+                        // placeholder={`Performance ${row + 1}`}
+                        value={performancesName[row]}
+                        placeholder={performancesName[row]}
+                        onChange={(e) => handlePerformancesNameChange(e, row)}
+                      />
+                    </TableCell>
                     {[...Array(size)].map((_, col) => (
                       <TableCell key={col}>
                         {row === col ? (
                           // <Card className="text-left">
                           //   <CardContent className="">0</CardContent>
                           // </Card>
-                          <div className="mx-3">0</div>
+                          <div className="mx-3">-</div>
                         ) : (
                           <Input
                             type="number"
@@ -143,14 +170,16 @@ const SetFlowOptimizer = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {result.tour.map((performance: any, index: any) => (
-                    <TableRow key={index}>
-                      <TableCell>{index + 1}</TableCell>
-                      <TableCell>Performance {performance + 1}</TableCell>
-                      <TableCell>{result.overlap_costs[index]}</TableCell>
-                      <TableCell>{result.total_costs[index]}</TableCell>
-                    </TableRow>
-                  ))}
+                  {result.performancesName.map(
+                    (performance: any, index: any) => (
+                      <TableRow key={index}>
+                        <TableCell>{index + 1}</TableCell>
+                        <TableCell>Performance {performance}</TableCell>
+                        <TableCell>{result.overlap_costs[index]}</TableCell>
+                        <TableCell>{result.total_costs[index]}</TableCell>
+                      </TableRow>
+                    )
+                  )}
                 </TableBody>
               </Table>
             </div>

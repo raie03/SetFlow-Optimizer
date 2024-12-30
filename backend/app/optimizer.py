@@ -1,6 +1,7 @@
 import numpy as np
+from typing import List
 
-def optimize_setlist(costs):
+def optimize_setlist(performancesName: List[str], costs: List[List[int]]):
     INF = 1 << 30
     n = len(costs)
     
@@ -25,13 +26,17 @@ def optimize_setlist(costs):
     
     # Reconstruct the optimal route
     tour = [0] * (n + 1)
+    perf = [""] * (n + 1)
     cost = [0] * n
     pos = 0
     b = (1 << n) - 1
     
     tour[0] = 0
+    perf[0] = performancesName[0]
     for i in range(n):
         tour[i + 1] = route[b][pos]
+        perf[i + 1] = performancesName[route[b][pos]]
+        # print(tour)
         cost[i] = dp[b][pos]
         b = b ^ (1 << pos)
         pos = tour[i + 1]
@@ -48,4 +53,7 @@ def optimize_setlist(costs):
         overlap_costs.append(cost[i] - prev_cost)
         prev_cost = cost[i]
     
-    return tour[:-1][::-1], overlap_costs, cost[::-1]
+    print(perf[:-1][::-1])
+    print(tour[:-1][::-1])
+    
+    return perf[:-1][::-1], overlap_costs, cost[::-1]

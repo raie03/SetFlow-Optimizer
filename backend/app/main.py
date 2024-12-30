@@ -18,9 +18,9 @@ app.add_middleware(
 @app.post("/api/optimize")
 async def optimize(request: OptimizationRequest):
     try:
-        tour, overlap_costs, total_costs = optimize_setlist(request.costs)
+        performancesName, overlap_costs, total_costs = optimize_setlist(request.performancesName, request.costs)
         return OptimizationResponse(
-            tour=tour,
+            performancesName=performancesName,
             overlap_costs=overlap_costs,
             total_costs=total_costs
         )
