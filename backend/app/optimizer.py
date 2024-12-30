@@ -85,9 +85,11 @@ def optimize_setlist_manual(performances: List[Performance]):
         next_members = set(performances[tour[i + 1]].performers or [])
         overlapping_members = current_members & next_members
         detail.append({
-            'from': performances[tour[i]].name,
-            'to': performances[tour[i + 1]].name,
+            'from_performance': performances[tour[i]].name,
+            'to_performance': performances[tour[i + 1]].name,
             'overlapping_members': list(overlapping_members)
         })
+    
+    print(detail)
 
     return perfName, overlap_costs, cost, detail

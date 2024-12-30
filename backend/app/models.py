@@ -14,6 +14,11 @@ class Performance(BaseModel):
     name: str
     performers: Optional[List[str]] = None
 
+class PerformanceDetail(BaseModel):
+    from_performance: str
+    to_performance: str
+    overlapping_members: List[str]
+
 class OptimizationManualRequest(BaseModel):
     performances: List[Performance]
 
@@ -21,4 +26,4 @@ class OptimizationManualResponse(BaseModel):
     performancesName: List[str]
     overlap_costs: List[int]
     total_costs: List[int]
-    detail: List[dict]
+    detail: List[PerformanceDetail]
