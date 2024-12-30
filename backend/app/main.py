@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from app.models import OptimizationRequest, OptimizationResponse
-from app.optimizer import optimize_setlist
+from app.models import OptimizationOverlapRequest, OptimizationOverlapResponse, Performance, OptimizationManualRequest, OptimizationManualResponse
+from app.optimizer import optimize_setlist, optimize_setlist_manual
 
 app = FastAPI()
 
@@ -15,14 +15,29 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.post("/api/optimize")
-async def optimize(request: OptimizationRequest):
+@app.post("/api/optimize/overlap")
+async def optimize_overlap(request: OptimizationOverlapRequest):
     try:
+        print(request)
         performancesName, overlap_costs, total_costs = optimize_setlist(request.performancesName, request.costs)
-        return OptimizationResponse(
+        return OptimizationOverlapResponse(
             performancesName=performancesName,
             overlap_costs=overlap_costs,
             total_costs=total_costs
+        )
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/api/optimize/manual")
+async def optimize_manual(request: OptimizationManualRequest):
+    try:
+        print(request)
+        performancesName, overlap_costs, total_costs, detail = optimize_setlist_manual(request.performances)
+        return OptimizationManualResponse(
+            performancesName=performancesName,
+            overlap_costs=overlap_costs,
+            total_costs=total_costs,
+            detail=detail
         )
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))

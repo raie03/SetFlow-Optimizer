@@ -15,12 +15,16 @@ import {
 import { stringify } from "querystring";
 
 const SetFlowOptimizer = () => {
+  const [inputMethod, setInputMethod] = useState("manual");
   const [size, setSize] = useState(3);
   const [costs, setCosts] = useState(Array(3).fill(Array(3).fill(0)));
   const [result, setResult]: any = useState(null);
   const [performancesName, setPerformancesName] = useState(
     Array.from({ length: 3 }, (_, index) => `Performance ${index + 1}`)
   );
+  const [performances, setPerformances] = useState<
+    { name: string; performers: string[] }[]
+  >([]);
 
   console.log(performancesName);
 
@@ -64,16 +68,67 @@ const SetFlowOptimizer = () => {
 
   const handleSubmit = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          performancesName: performancesName,
-          costs: costs,
-        }),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/overlap`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            performancesName: performancesName,
+            costs: costs,
+          }),
+        }
+      );
+
+      const data = await response.json();
+      setResult(data);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  const addPerformance = () => {
+    setPerformances([...performances, { name: "", performers: [] }]);
+  };
+
+  const addMember = (index: number) => {
+    const updatedPerformances = [...performances];
+    updatedPerformances[index].performers.push("");
+    setPerformances(updatedPerformances);
+  };
+
+  const updatePerformanceName = (index: number, value: string) => {
+    const updatedPerformances = [...performances];
+    updatedPerformances[index].name = value;
+    setPerformances(updatedPerformances);
+  };
+
+  const updateMemberName = (
+    performanceIndex: number,
+    memberIndex: number,
+    value: string
+  ) => {
+    const updatedPerformances = [...performances];
+    updatedPerformances[performanceIndex].performers[memberIndex] = value;
+    setPerformances(updatedPerformances);
+  };
+
+  const handleSubmit2 = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/manual`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            performances,
+          }),
+        }
+      );
 
       const data = await response.json();
       setResult(data);
@@ -110,7 +165,9 @@ const SetFlowOptimizer = () => {
                 <TableRow>
                   <TableHead>From / To</TableHead>
                   {[...Array(size)].map((_, i) => (
-                    <TableHead key={i}>{performancesName[i]}</TableHead>
+                    <TableHead key={i} className="w-auto">
+                      {performancesName[i]}
+                    </TableHead>
                   ))}
                 </TableRow>
               </TableHeader>
@@ -124,6 +181,7 @@ const SetFlowOptimizer = () => {
                         value={performancesName[row]}
                         placeholder={performancesName[row]}
                         onChange={(e) => handlePerformancesNameChange(e, row)}
+                        className="w-auto"
                       />
                     </TableCell>
                     {[...Array(size)].map((_, col) => (
@@ -132,7 +190,7 @@ const SetFlowOptimizer = () => {
                           // <Card className="text-left">
                           //   <CardContent className="">0</CardContent>
                           // </Card>
-                          <div className="mx-3">-</div>
+                          <div className="mx-3.5">-</div>
                         ) : (
                           <Input
                             type="number"
@@ -142,7 +200,7 @@ const SetFlowOptimizer = () => {
                             onChange={(e) =>
                               handleCostChange(row, col, e.target.value)
                             }
-                            className="w-16"
+                            className="w-auto"
                           />
                         )}
                       </TableCell>
@@ -184,6 +242,65 @@ const SetFlowOptimizer = () => {
               </Table>
             </div>
           )}
+        </CardContent>
+      </Card>
+      <Card className="mb-8">
+        <CardHeader>
+          <CardTitle>SetFlow Optimizer</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="p-4">
+            <h1 className="text-xl font-bold mb-4">Dynamic Performance Form</h1>
+
+            <Button className="px-4 py-2 rounded mb-4" onClick={addPerformance}>
+              Add Performance
+            </Button>
+
+            {performances.map((performance, performanceIndex) => (
+              <div
+                key={performanceIndex}
+                className="mb-4 border p-4 rounded shadow"
+              >
+                <Input
+                  type="text"
+                  placeholder={`Performance ${performanceIndex + 1} Name`}
+                  value={performance.name}
+                  onChange={(e) =>
+                    updatePerformanceName(performanceIndex, e.target.value)
+                  }
+                  className="border px-2 py-1 rounded w-full mb-2"
+                />
+
+                <Button
+                  className="px-4 py-2 rounded mb-2"
+                  onClick={() => addMember(performanceIndex)}
+                >
+                  Add Member
+                </Button>
+
+                {performance.performers.map((member, memberIndex) => (
+                  <Input
+                    key={memberIndex}
+                    type="text"
+                    placeholder={`Member ${memberIndex + 1}`}
+                    value={member}
+                    onChange={(e) =>
+                      updateMemberName(
+                        performanceIndex,
+                        memberIndex,
+                        e.target.value
+                      )
+                    }
+                    className="border px-2 py-1 rounded w-full mb-2"
+                  />
+                ))}
+              </div>
+            ))}
+
+            <Button className="px-4 py-2 rounded" onClick={handleSubmit2}>
+              Submit
+            </Button>
+          </div>
         </CardContent>
       </Card>
     </div>
