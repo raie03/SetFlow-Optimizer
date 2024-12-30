@@ -1,101 +1,164 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useState } from "react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+
+const SetFlowOptimizer = () => {
+  const [size, setSize] = useState(3);
+  const [costs, setCosts] = useState(Array(3).fill(Array(3).fill(0)));
+  const [result, setResult]: any = useState(null);
+
+  // console.log(costs);
+
+  const handleSizeChange = (e: any) => {
+    const newSize = parseInt(e.target.value) || 3;
+    setSize(newSize);
+    setCosts(Array(newSize).fill(Array(newSize).fill(0)));
+  };
+
+  const handleCostChange = (row: any, col: any, value: any) => {
+    // const newCosts = costs.map((r, i) =>
+    //   i === row
+    //     ? r.map((c: any, j: any) => (j === col ? parseInt(value) || 0 : c))
+    //     : r
+    // );
+    // setCosts(newCosts);
+    const newValue = parseInt(value.toString()) || 0;
+    const updatedCosts = costs.map((r, i) =>
+      r.map((c: any, j: any) => {
+        if ((i === row && j === col) || (i === col && j === row)) {
+          // 対称な位置 (row:col と col:row) を更新
+          return newValue;
+        }
+        return c; // 他の要素はそのまま
+      })
+    );
+
+    setCosts(updatedCosts);
+  };
+
+  const handleSubmit = async () => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ costs }),
+      });
+
+      const data = await response.json();
+      setResult(data);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <div className="container mx-auto p-4">
+      <Card className="mb-8">
+        <CardHeader>
+          <CardTitle>SetFlow Optimizer</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="mb-4">
+            <label className="block text-sm font-medium mb-2">
+              Number of Performances:
+              <Input
+                type="number"
+                min="2"
+                max="16"
+                value={size}
+                onChange={handleSizeChange}
+                className="mt-1"
+              />
+            </label>
+          </div>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>From / To</TableHead>
+                  {[...Array(size)].map((_, i) => (
+                    <TableHead key={i}>Performance {i + 1}</TableHead>
+                  ))}
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {[...Array(size)].map((_, row) => (
+                  <TableRow key={row}>
+                    <TableCell>Performance {row + 1}</TableCell>
+                    {[...Array(size)].map((_, col) => (
+                      <TableCell key={col}>
+                        {row === col ? (
+                          // <Card className="text-left">
+                          //   <CardContent className="">0</CardContent>
+                          // </Card>
+                          <div className="mx-3">0</div>
+                        ) : (
+                          <Input
+                            type="number"
+                            min="0"
+                            max="100"
+                            value={costs[row][col]}
+                            onChange={(e) =>
+                              handleCostChange(row, col, e.target.value)
+                            }
+                            className="w-16"
+                          />
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+
+          <Button onClick={handleSubmit} className="mt-4">
+            Optimize Setlist
+          </Button>
+
+          {result && (
+            <div className="mt-8">
+              <h3 className="text-lg font-semibold mb-4">Optimal Setlist:</h3>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Order</TableHead>
+                    <TableHead>Performance</TableHead>
+                    <TableHead>Overlap Cost</TableHead>
+                    <TableHead>Total Cost</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {result.tour.map((performance: any, index: any) => (
+                    <TableRow key={index}>
+                      <TableCell>{index + 1}</TableCell>
+                      <TableCell>Performance {performance + 1}</TableCell>
+                      <TableCell>{result.overlap_costs[index]}</TableCell>
+                      <TableCell>{result.total_costs[index]}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
-}
+};
+
+export default SetFlowOptimizer;

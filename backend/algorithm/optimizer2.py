@@ -49,3 +49,14 @@ def optimize_setlist(costs):
         prev_cost = cost[i]
     
     return tour[:-1][::-1], overlap_costs, cost[::-1]
+
+costs = [
+    [0,1,2],
+    [2,0,3],
+    [0,1,0],
+]
+
+tour, overlap_costs, total_costs = optimize_setlist(costs)
+print(tour)
+print(overlap_costs)
+print(total_costs)
