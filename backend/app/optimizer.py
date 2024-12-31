@@ -49,6 +49,12 @@ def optimize_setlist(performancesName: List[str], costs: List[List[int]]):
     #     print(c, prev_cost)
     #     overlap_costs.append(c - prev_cost)
     #     prev_cost = c
+    
+    # 最初のコストを0にする
+    f = cost[n-1]
+    for i in range(n):
+        cost[i] -= f
+    
     for i in range(n-1, -1, -1):
         print(cost[i], prev_cost)
         overlap_costs.append(cost[i] - prev_cost)
