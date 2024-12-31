@@ -15,6 +15,7 @@ import {
 import { Tabs, TabsContent, TabsTrigger, TabsList } from "@/components/ui/tabs";
 import * as XLSX from "xlsx";
 import { toast } from "sonner";
+import LoadingSkeleton from "./components/LoadingSkeleton";
 
 const SetFlowOptimizer = () => {
   const [inputMethod, setInputMethod] = useState("overlap");
@@ -30,6 +31,7 @@ const SetFlowOptimizer = () => {
   const [isLoadedExcelData, setIsLoadedExcelData] = useState(false);
   const [testNumPerformances, setTestNumPerformances] = useState(3);
   const [testNumPerformers, setTestNumPerformers] = useState(5);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleReset = () => {
     setCosts(Array(size).fill(Array(size).fill(0)));
@@ -89,6 +91,7 @@ const SetFlowOptimizer = () => {
   };
 
   const handleSubmit = () => {
+    setIsLoading(true);
     toast.promise(
       // Promise を返す非同期処理
       fetch(`${process.env.NEXT_PUBLIC_API_URL}/overlap`, {
@@ -102,6 +105,7 @@ const SetFlowOptimizer = () => {
         }),
       }).then(async (response) => {
         const data = await response.json();
+        setIsLoading(false);
         setResult(data);
         return data; // このreturnは成功メッセージのために使われます
       }),
@@ -129,6 +133,7 @@ const SetFlowOptimizer = () => {
   };
 
   const handleManualSubmit = () => {
+    setIsLoading(true);
     toast.promise(
       // Promise を返す非同期処理
       fetch(`${process.env.NEXT_PUBLIC_API_URL}/manual`, {
@@ -141,6 +146,7 @@ const SetFlowOptimizer = () => {
         }),
       }).then(async (response) => {
         const data = await response.json();
+        setIsLoading(false);
         setResult(data);
         return data; // このreturnは成功メッセージのために使われます
       }),
@@ -515,58 +521,68 @@ const SetFlowOptimizer = () => {
               </div>
             </TabsContent>
 
-            {result && (
-              <div className="mt-8">
-                <h3 className="text-lg font-semibold mb-4">Optimal Setlist:</h3>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Order</TableHead>
-                      <TableHead>Performance</TableHead>
-                      <TableHead>Overlap Cost</TableHead>
-                      <TableHead>Total Cost</TableHead>
-                      {/* {result.detail && <TableHead>Detail</TableHead>} */}
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {result.performancesName.map(
-                      (performance: any, index: any) => (
-                        <TableRow key={index}>
-                          <TableCell>{index + 1}</TableCell>
-                          <TableCell>{performance}</TableCell>
-                          <TableCell>{result.overlap_costs[index]}</TableCell>
-                          <TableCell>{result.total_costs[index]}</TableCell>
-                        </TableRow>
-                      )
-                    )}
-                  </TableBody>
-                </Table>
-              </div>
-            )}
-            {result?.detail! && (
-              <div className="mt-3">
-                <h3 className="font-semibold mb-2">Overlap Detail</h3>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>From → To</TableHead>
-                      <TableHead>Overlaping Members</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {result.detail.map((detail: any, index: any) => (
-                      <TableRow key={index}>
-                        <TableCell>
-                          {detail.from_performance} → {detail.to_performance}
-                        </TableCell>
-                        <TableCell className="w-auto">
-                          {detail.overlapping_members.join(", ")}
-                        </TableCell>
+            {isLoading ? (
+              <LoadingSkeleton />
+            ) : (
+              result && (
+                <div className="mt-8">
+                  <h3 className="text-lg font-semibold mb-4">
+                    Optimal Setlist:
+                  </h3>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Order</TableHead>
+                        <TableHead>Performance</TableHead>
+                        <TableHead>Overlap Cost</TableHead>
+                        <TableHead>Total Cost</TableHead>
+                        {/* {result.detail && <TableHead>Detail</TableHead>} */}
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
+                    </TableHeader>
+                    <TableBody>
+                      {result.performancesName.map(
+                        (performance: any, index: any) => (
+                          <TableRow key={index}>
+                            <TableCell>{index + 1}</TableCell>
+                            <TableCell>{performance}</TableCell>
+                            <TableCell>{result.overlap_costs[index]}</TableCell>
+                            <TableCell>{result.total_costs[index]}</TableCell>
+                          </TableRow>
+                        )
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
+              )
+            )}
+            {isLoading ? (
+              <LoadingSkeleton />
+            ) : (
+              result?.detail! && (
+                <div className="mt-3">
+                  <h3 className="font-semibold mb-2">Overlap Detail</h3>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>From → To</TableHead>
+                        <TableHead>Overlaping Members</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {result.detail.map((detail: any, index: any) => (
+                        <TableRow key={index}>
+                          <TableCell>
+                            {detail.from_performance} → {detail.to_performance}
+                          </TableCell>
+                          <TableCell className="w-auto">
+                            {detail.overlapping_members.join(", ")}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )
             )}
           </Tabs>
         </CardContent>
