@@ -30,13 +30,15 @@ const SetFlowOptimizer = () => {
   const [isLoadedExcelData, setIsLoadedExcelData] = useState(false);
   const [testNumPerformances, setTestNumPerformances] = useState(3);
   const [testNumPerformers, setTestNumPerformers] = useState(5);
-  // const [performances, setPerformances] = useState<
-  //   { name: string; performers: string }[]
-  // >([]);
 
-  // console.log(performancesName);
-
-  // console.log(costs);
+  const handleReset = () => {
+    setCosts(Array(size).fill(Array(size).fill(0)));
+    setResult(null);
+    setPerformancesName(
+      Array.from({ length: size }, (_, index) => `Performance ${index + 1}`)
+    );
+    setPerformances(Array(size).fill({ name: "", performers: [] }));
+  };
 
   const handleSizeChange = (e: any) => {
     const newSize = parseInt(e.target.value) || 3;
@@ -86,28 +88,6 @@ const SetFlowOptimizer = () => {
     setCosts(updatedCosts);
   };
 
-  // const handleSubmit = async () => {
-  //   try {
-  //     const response = await fetch(
-  //       `${process.env.NEXT_PUBLIC_API_URL}/overlap`,
-  //       {
-  //         method: "POST",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify({
-  //           performancesName: performancesName,
-  //           costs: costs,
-  //         }),
-  //       }
-  //     );
-
-  //     const data = await response.json();
-  //     setResult(data);
-  //   } catch (error) {
-  //     console.error("Error:", error);
-  //   }
-  // };
   const handleSubmit = () => {
     toast.promise(
       // Promise を返す非同期処理
@@ -147,28 +127,6 @@ const SetFlowOptimizer = () => {
     console.log(updatedPerformances);
     setPerformances(updatedPerformances);
   };
-
-  // const handleManualSubmit = async () => {
-  //   try {
-  //     const response = await fetch(
-  //       `${process.env.NEXT_PUBLIC_API_URL}/manual`,
-  //       {
-  //         method: "POST",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify({
-  //           performances,
-  //         }),
-  //       }
-  //     );
-
-  //     const data = await response.json();
-  //     setResult(data);
-  //   } catch (error) {
-  //     console.error("Error:", error);
-  //   }
-  // };
 
   const handleManualSubmit = () => {
     toast.promise(
@@ -288,6 +246,12 @@ const SetFlowOptimizer = () => {
                     className="mt-1"
                   />
                 </label>
+                <Button onClick={handleSubmit} className="mt-4">
+                  Optimize Setlist
+                </Button>
+                <Button onClick={handleReset} className="mx-1">
+                  Reset
+                </Button>
               </div>
 
               {/* 演目の被り人数の入力欄 */}
@@ -345,9 +309,9 @@ const SetFlowOptimizer = () => {
                 </Table>
               </div>
 
-              <Button onClick={handleSubmit} className="mt-4">
+              {/* <Button onClick={handleSubmit} className="mt-4">
                 Optimize Setlist
-              </Button>
+              </Button> */}
             </TabsContent>
             <TabsContent value="manual">
               <div className="mb-4">
@@ -362,6 +326,12 @@ const SetFlowOptimizer = () => {
                     className="mt-1"
                   />
                 </label>
+                <Button className="mt-4" onClick={handleManualSubmit}>
+                  Optimize Setlist
+                </Button>
+                <Button onClick={handleReset} className="mx-1">
+                  Reset
+                </Button>
               </div>
 
               {/* 演目名と出演者の入力欄 */}
@@ -401,43 +371,45 @@ const SetFlowOptimizer = () => {
                     ))}
                   </TableBody>
                 </Table>
-                <Button
+                {/* <Button
                   className="px-4 py-2 rounded"
                   onClick={handleManualSubmit}
                 >
                   Optimize Setlist
-                </Button>
+                </Button> */}
               </div>
             </TabsContent>
 
             <TabsContent value="excel">
-              <Input
-                type="file"
-                accept=".xlsx, .xls"
-                onChange={handleExcelUpload}
-                className="mb-4"
-              />
-              <Button
-                className="px-4 py-2 rounded"
-                onClick={handleManualSubmit}
-              >
-                Optimize Setlist
-              </Button>
-              {isLoadedExcelData && (
-                <div className="overflow-x-auto">
-                  <h3 className="mt-3 mx-5">Preview</h3>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Performance Name</TableHead>
-                        <TableHead>Performers</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {performances.map((performance, row) => (
-                        <TableRow key={row}>
-                          <TableCell>
-                            {/* <Input
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-2">
+                  Import Excel File:
+                  <Input
+                    type="file"
+                    accept=".xlsx, .xls"
+                    onChange={handleExcelUpload}
+                    className="mt-1"
+                  />
+                  <Button className="mt-6" onClick={handleManualSubmit}>
+                    Optimize Setlist
+                  </Button>
+                </label>
+              </div>
+
+              <div className="overflow-x-auto">
+                <h3 className="mt-3 mx-5">Preview</h3>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Performance Name</TableHead>
+                      <TableHead>Performers</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {performances.map((performance, row) => (
+                      <TableRow key={row}>
+                        <TableCell>
+                          {/* <Input
                               type="text"
                               // placeholder={`Performance ${row + 1}`}
                               value={performance.name}
@@ -447,12 +419,12 @@ const SetFlowOptimizer = () => {
                               }
                               className="w-full overflow-auto"
                             /> */}
-                            <div className="mx-3.5 w-full overflow-auto">
-                              {performance.name}
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            {/* <Input
+                          <div className="mx-3.5 w-full overflow-auto">
+                            {performance.name}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          {/* <Input
                               type="text"
                               min="0"
                               max="100"
@@ -461,20 +433,19 @@ const SetFlowOptimizer = () => {
                               onChange={(e) => updateMemberName2(e, row)}
                               className="w-full overflow-auto"
                             /> */}
-                            <div className="mx-3.5 w-full overflow-auto">
-                              {performance.performers.join(",")}
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-              )}
+                          <div className="mx-3.5 w-full overflow-auto">
+                            {performance.performers.join(",")}
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             </TabsContent>
 
             <TabsContent value="test">
-              <div>
+              <div className="mb-4">
                 <label className="block text-sm font-medium mb-2">
                   Number of Performances:
                   <Input
@@ -499,16 +470,10 @@ const SetFlowOptimizer = () => {
                     className="mt-1"
                   />
                 </label>
-                <Button
-                  className="px-4 py-2 rounded"
-                  onClick={generateRandomTestCase}
-                >
+                <Button className="mt-4" onClick={generateRandomTestCase}>
                   Generate Random Test Case
                 </Button>
-                <Button
-                  className="mx-1 py-2 rounded"
-                  onClick={handleManualSubmit}
-                >
+                <Button className="mt-4 mx-1" onClick={handleManualSubmit}>
                   Optimize Setlist
                 </Button>
                 <div className="overflow-x-auto">
