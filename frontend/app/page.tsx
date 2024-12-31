@@ -28,6 +28,8 @@ const SetFlowOptimizer = () => {
     { name: string; performers: string[] }[]
   >(Array(3).fill({ name: "", performers: [] }));
   const [isLoadedExcelData, setIsLoadedExcelData] = useState(false);
+  const [testNumPerformances, setTestNumPerformances] = useState(3);
+  const [testNumPerformers, setTestNumPerformers] = useState(5);
   // const [performances, setPerformances] = useState<
   //   { name: string; performers: string }[]
   // >([]);
@@ -217,20 +219,29 @@ const SetFlowOptimizer = () => {
     reader.readAsBinaryString(file);
   };
 
-  // const handleXlsxSubmit = async () => {
-  //   try {
-  //     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/xlsx`, {
-  //       method: "POST",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify(excelData),
-  //     });
+  const generateRandomTestCase = () => {
+    const performancesData = [];
+    const members = Array.from(
+      { length: testNumPerformers },
+      (_, i) => `member${i + 1}`
+    );
 
-  //     const data = await response.json();
-  //     setResult(data);
-  //   } catch (error) {
-  //     console.error("Error:", error);
-  //   }
-  // };
+    for (let i = 0; i < testNumPerformances; i++) {
+      // 各演目に参加するメンバーをランダムに選択
+      const selectedMembers = [...members]
+        .sort(() => Math.random() - 0.5)
+        .slice(0, Math.floor(Math.random() * (members.length - 1)) + 1);
+
+      const performanceData = {
+        name: `Performance ${i + 1}`,
+        performers: selectedMembers,
+      };
+
+      performancesData.push(performanceData);
+    }
+    setPerformances(performancesData);
+    // return performancesData;
+  };
 
   return (
     <div className="container mx-auto p-4">
@@ -253,8 +264,14 @@ const SetFlowOptimizer = () => {
               >
                 演目名と出演者
               </TabsTrigger>
-              <TabsTrigger value="excel" onClick={() => setInputMethod("csv")}>
+              <TabsTrigger
+                value="excel"
+                onClick={() => setInputMethod("excel")}
+              >
                 Excelアップロード
+              </TabsTrigger>
+              <TabsTrigger value="test" onClick={() => setInputMethod("test")}>
+                テスト
               </TabsTrigger>
             </TabsList>
 
@@ -265,7 +282,7 @@ const SetFlowOptimizer = () => {
                   <Input
                     type="number"
                     min="2"
-                    max="16"
+                    max="20"
                     value={size}
                     onChange={handleSizeChange}
                     className="mt-1"
@@ -339,7 +356,7 @@ const SetFlowOptimizer = () => {
                   <Input
                     type="number"
                     min="2"
-                    max="16"
+                    max="20"
                     value={size}
                     onChange={handleSizeChange}
                     className="mt-1"
@@ -374,8 +391,6 @@ const SetFlowOptimizer = () => {
                         <TableCell>
                           <Input
                             type="text"
-                            min="0"
-                            max="100"
                             value={performance.performers}
                             placeholder="Member Name"
                             onChange={(e) => updateMemberName2(e, row)}
@@ -414,10 +429,8 @@ const SetFlowOptimizer = () => {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead className="w-full">
-                          Performance Name
-                        </TableHead>
-                        <TableHead className="w-full">Performers</TableHead>
+                        <TableHead>Performance Name</TableHead>
+                        <TableHead>Performers</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -458,6 +471,83 @@ const SetFlowOptimizer = () => {
                   </Table>
                 </div>
               )}
+            </TabsContent>
+
+            <TabsContent value="test">
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Number of Performances:
+                  <Input
+                    type="number"
+                    min="2"
+                    max="20"
+                    value={testNumPerformances}
+                    onChange={(e: any) =>
+                      setTestNumPerformances(e.target.value)
+                    }
+                    className="mt-1"
+                  />
+                </label>
+                <label className="block text-sm font-medium mb-2">
+                  Number of Performers:
+                  <Input
+                    type="number"
+                    min="2"
+                    max="500"
+                    value={testNumPerformers}
+                    onChange={(e: any) => setTestNumPerformers(e.target.value)}
+                    className="mt-1"
+                  />
+                </label>
+                <Button
+                  className="px-4 py-2 rounded"
+                  onClick={generateRandomTestCase}
+                >
+                  Generate Random Test Case
+                </Button>
+                <Button
+                  className="mx-1 py-2 rounded"
+                  onClick={handleManualSubmit}
+                >
+                  Optimize Setlist
+                </Button>
+                <div className="overflow-x-auto">
+                  <h3 className="mt-3 mx-5">Preview</h3>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Performance Name</TableHead>
+                        <TableHead>Performers</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {performances.map((performance, row) => (
+                        <TableRow key={row}>
+                          <TableCell>
+                            <div className="mx-3.5 w-full overflow-auto">
+                              {performance.name}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            {/* <Input
+                              type="text"
+                              min="0"
+                              max="100"
+                              value={performance.performers}
+                              placeholder="Member Name"
+                              onChange={(e) => updateMemberName2(e, row)}
+                              className="w-full overflow-auto"
+                            /> */}
+                            <div className="mx-3.5 w-full overflow-auto">
+                              {performance.performers.join(",")}
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
             </TabsContent>
 
             {result && (
