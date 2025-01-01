@@ -16,6 +16,10 @@ import { Tabs, TabsContent, TabsTrigger, TabsList } from "@/components/ui/tabs";
 import * as XLSX from "xlsx";
 import { toast } from "sonner";
 import LoadingSkeleton from "./components/LoadingSkeleton";
+import OverlapForm from "./components/OverlapForm";
+import ManualForm from "./components/ManualForm";
+import ExcelForm from "./components/ExcelForm";
+import TestForm from "./components/TestForm";
 
 const SetFlowOptimizer = () => {
   const [inputMethod, setInputMethod] = useState("overlap");
@@ -240,7 +244,8 @@ const SetFlowOptimizer = () => {
             </TabsList>
 
             <TabsContent value="overlap">
-              <div className="mb-4">
+              <OverlapForm setIsLoading={setIsLoading} setResult={setResult} />
+              {/* <div className="mb-4">
                 <label className="block text-sm font-medium mb-2">
                   Number of Performances:
                   <Input
@@ -258,10 +263,10 @@ const SetFlowOptimizer = () => {
                 <Button onClick={handleReset} className="mx-1">
                   Reset
                 </Button>
-              </div>
+              </div> */}
 
               {/* 演目の被り人数の入力欄 */}
-              <div className="overflow-x-auto">
+              {/* <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -313,14 +318,11 @@ const SetFlowOptimizer = () => {
                     ))}
                   </TableBody>
                 </Table>
-              </div>
-
-              {/* <Button onClick={handleSubmit} className="mt-4">
-                Optimize Setlist
-              </Button> */}
+              </div> */}
             </TabsContent>
             <TabsContent value="manual">
-              <div className="mb-4">
+              <ManualForm setIsLoading={setIsLoading} setResult={setResult} />
+              {/* <div className="mb-4">
                 <label className="block text-sm font-medium mb-2">
                   Number of Performances:
                   <Input
@@ -338,10 +340,10 @@ const SetFlowOptimizer = () => {
                 <Button onClick={handleReset} className="mx-1">
                   Reset
                 </Button>
-              </div>
+              </div> */}
 
               {/* 演目名と出演者の入力欄 */}
-              <div className="overflow-x-auto">
+              {/* <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -377,81 +379,62 @@ const SetFlowOptimizer = () => {
                     ))}
                   </TableBody>
                 </Table>
-                {/* <Button
-                  className="px-4 py-2 rounded"
-                  onClick={handleManualSubmit}
-                >
-                  Optimize Setlist
-                </Button> */}
-              </div>
+              </div> */}
             </TabsContent>
 
             <TabsContent value="excel">
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-2">
-                  Import Excel File:
-                  <Input
-                    type="file"
-                    accept=".xlsx, .xls"
-                    onChange={handleExcelUpload}
-                    className="mt-1"
-                  />
-                  <Button className="mt-6" onClick={handleManualSubmit}>
-                    Optimize Setlist
-                  </Button>
-                </label>
-              </div>
+              <ExcelForm setIsLoading={setIsLoading} setResult={setResult} />
+              {/* <div>
+                <div className="mb-4">
+                  <label className="block text-sm font-medium mb-2">
+                    Import Excel File:
+                    <Input
+                      type="file"
+                      accept=".xlsx, .xls"
+                      onChange={handleExcelUpload}
+                      className="mt-1"
+                    />
+                    <Button className="mt-6" onClick={handleManualSubmit}>
+                      Optimize Setlist
+                    </Button>
+                  </label>
+                </div>
 
-              <div className="overflow-x-auto">
-                <h3 className="mt-3 mx-5">Preview</h3>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Performance Name</TableHead>
-                      <TableHead>Performers</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {performances.map((performance, row) => (
-                      <TableRow key={row}>
-                        <TableCell>
-                          {/* <Input
-                              type="text"
-                              // placeholder={`Performance ${row + 1}`}
-                              value={performance.name}
-                              placeholder={`Performance ${row + 1} Name`}
-                              onChange={(e) =>
-                                handlePerformancesNameChange(e, row)
-                              }
-                              className="w-full overflow-auto"
-                            /> */}
-                          <div className="mx-3.5 w-full overflow-auto">
-                            {performance.name}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          {/* <Input
-                              type="text"
-                              min="0"
-                              max="100"
-                              value={performance.performers}
-                              placeholder="Member Name"
-                              onChange={(e) => updateMemberName2(e, row)}
-                              className="w-full overflow-auto"
-                            /> */}
-                          <div className="mx-3.5 w-full overflow-auto">
-                            {performance.performers.join(",")}
-                          </div>
-                        </TableCell>
+                <div className="overflow-x-auto">
+                  <h3 className="mt-3 mx-5">Preview</h3>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Performance Name</TableHead>
+                        <TableHead>Performers</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
+                    </TableHeader>
+                    <TableBody>
+                      {performances.map((performance, row) => (
+                        <TableRow key={row}>
+                          <TableCell>
+                            
+                            <div className="mx-3.5 w-full overflow-auto">
+                              {performance.name}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            
+                            <div className="mx-3.5 w-full overflow-auto">
+                              {performance.performers.join(",")}
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div> */}
             </TabsContent>
 
             <TabsContent value="test">
-              <div className="mb-4">
+              <TestForm setIsLoading={setIsLoading} setResult={setResult} />
+              {/* <div className="mb-4">
                 <label className="block text-sm font-medium mb-2">
                   Number of Performances:
                   <Input
@@ -500,15 +483,6 @@ const SetFlowOptimizer = () => {
                             </div>
                           </TableCell>
                           <TableCell>
-                            {/* <Input
-                              type="text"
-                              min="0"
-                              max="100"
-                              value={performance.performers}
-                              placeholder="Member Name"
-                              onChange={(e) => updateMemberName2(e, row)}
-                              className="w-full overflow-auto"
-                            /> */}
                             <div className="mx-3.5 w-full overflow-auto">
                               {performance.performers.join(",")}
                             </div>
@@ -518,7 +492,7 @@ const SetFlowOptimizer = () => {
                     </TableBody>
                   </Table>
                 </div>
-              </div>
+              </div> */}
             </TabsContent>
 
             {isLoading ? (
