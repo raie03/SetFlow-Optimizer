@@ -13,17 +13,23 @@ import {
 import React, { useState } from "react";
 import { toast } from "sonner";
 import * as XLSX from "xlsx";
+import { PerformanceData, ResultData } from "../types/types";
+
+interface RowData {
+  performance_name: string;
+  performers: string;
+}
 
 const ExcelForm = ({
   setIsLoading,
   setResult,
 }: {
-  setIsLoading: any;
-  setResult: any;
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  setResult: React.Dispatch<React.SetStateAction<ResultData>>;
 }) => {
-  const [performances, setPerformances] = useState<
-    { name: string; performers: string[] }[]
-  >(Array(3).fill({ name: "", performers: [] }));
+  const [performances, setPerformances] = useState<PerformanceData[]>(
+    Array(3).fill({ name: "", performers: [] })
+  );
   const [isLoadedExcelData, setIsLoadedExcelData] = useState(false);
 
   // Excelファイルを処理する関数
@@ -37,9 +43,9 @@ const ExcelForm = ({
       const workbook = XLSX.read(data, { type: "binary" });
       const sheetName = workbook.SheetNames[0];
       const sheet = workbook.Sheets[sheetName];
-      const jsonData = XLSX.utils.sheet_to_json(sheet);
+      const jsonData: RowData[] = XLSX.utils.sheet_to_json(sheet);
 
-      const performancesData = jsonData.map((row: any) => ({
+      const performancesData = jsonData.map((row) => ({
         name: row.performance_name, // A列
         performers: row.performers?.split(",") || [], // B列をカンマで分割
       }));

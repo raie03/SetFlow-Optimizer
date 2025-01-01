@@ -8,8 +8,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { PerformanceDetail, ResultData } from "../types/types";
 
-const Result = ({ isLoading, result }: { isLoading: any; result: any }) => {
+const Result = ({
+  isLoading,
+  result,
+}: {
+  isLoading: boolean;
+  result: ResultData;
+}) => {
   return (
     <div>
       {isLoading ? (
@@ -29,14 +36,16 @@ const Result = ({ isLoading, result }: { isLoading: any; result: any }) => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {result.performancesName.map((performance: any, index: any) => (
-                  <TableRow key={index}>
-                    <TableCell>{index + 1}</TableCell>
-                    <TableCell>{performance}</TableCell>
-                    <TableCell>{result.overlap_costs[index]}</TableCell>
-                    <TableCell>{result.total_costs[index]}</TableCell>
-                  </TableRow>
-                ))}
+                {result.performancesName.map(
+                  (performance: string, index: number) => (
+                    <TableRow key={index}>
+                      <TableCell>{index + 1}</TableCell>
+                      <TableCell>{performance}</TableCell>
+                      <TableCell>{result.overlap_costs[index]}</TableCell>
+                      <TableCell>{result.total_costs[index]}</TableCell>
+                    </TableRow>
+                  )
+                )}
               </TableBody>
             </Table>
           </div>
@@ -56,16 +65,18 @@ const Result = ({ isLoading, result }: { isLoading: any; result: any }) => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {result.detail.map((detail: any, index: any) => (
-                  <TableRow key={index}>
-                    <TableCell>
-                      {detail.from_performance} → {detail.to_performance}
-                    </TableCell>
-                    <TableCell className="w-auto">
-                      {detail.overlapping_members.join(", ")}
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {result.detail.map(
+                  (detail: PerformanceDetail, index: number) => (
+                    <TableRow key={index}>
+                      <TableCell>
+                        {detail.from_performance} → {detail.to_performance}
+                      </TableCell>
+                      <TableCell className="w-auto">
+                        {detail.overlapping_members.join(", ")}
+                      </TableCell>
+                    </TableRow>
+                  )
+                )}
               </TableBody>
             </Table>
           </div>

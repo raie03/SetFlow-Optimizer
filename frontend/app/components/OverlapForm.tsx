@@ -15,12 +15,23 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { useState } from "react";
+import { ResultData } from "../types/types";
 
 // スキーマ定義
 const overlapSchema = z.object({
-  performancesName: z.array(
-    z.string().min(1, "Performance name cannot be empty")
-  ),
+  performancesName: z
+    .array(z.string().min(1, "Performance name cannot be empty"))
+    .refine(
+      (performancesName) => {
+        const names = performancesName.map((perf: string) => perf);
+        const uniqueNames = new Set(names);
+        return names.length === uniqueNames.size;
+      },
+      {
+        message: "Duplicate performance names are not allowed.",
+        path: ["performancesName"], // エラーの対象を指定
+      }
+    ),
   costs: z.array(z.array(z.number().min(0).max(500))),
 });
 
@@ -33,8 +44,8 @@ export default function OverlapForm({
   setIsLoading,
   setResult,
 }: {
-  setIsLoading: any;
-  setResult: any;
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  setResult: React.Dispatch<React.SetStateAction<ResultData>>;
 }) {
   const [size, setSize] = useState(3); // 初期サイズ
   const {
@@ -66,17 +77,7 @@ export default function OverlapForm({
     setValue(`costs.${col}.${row}`, value, { shouldValidate: true });
   };
 
-  //   const handlePerformancesNameChange = (e: any, row: number) => {
-  //     const updatedPerformancesName: string[] = [
-  //       ...getValues("performancesName"),
-  //     ];
-  //     updatedPerformancesName[row] = e.target.value;
-  //     setValue("performancesName", updatedPerformancesName, {
-  //       shouldValidate: true,
-  //     });
-  //   };
-
-  const handleSizeChange = (e: any) => {
+  const handleSizeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     // 空文字の場合は0を設定し、それ以外は通常通り数値を処理
     const newSize =
@@ -92,7 +93,7 @@ export default function OverlapForm({
           : 0
       )
     );
-    console.log(getValues("costs"));
+    // console.log(getValues("costs"));
     setValue("costs", updatedCosts, { shouldValidate: true });
 
     // `performancesName`の更新
@@ -103,11 +104,11 @@ export default function OverlapForm({
         `Performance ${updatedPerformancesName.length + 1}`
       );
     }
-    console.log(updatedPerformancesName);
+    // console.log(updatedPerformancesName);
     setValue("performancesName", updatedPerformancesName, {
       shouldValidate: true,
     });
-    console.log(getValues("performancesName"));
+    // console.log(getValues("performancesName"));
   };
 
   const handleReset = () => {

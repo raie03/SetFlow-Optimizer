@@ -13,15 +13,28 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
+import { ResultData } from "../types/types";
 
 // スキーマ定義
 const manualSchema = z.object({
-  performances: z.array(
-    z.object({
-      name: z.string().min(1, "Performance name cannot be empty"),
-      performers: z.array(z.string().min(1, "Performers cannot be empty")),
-    })
-  ),
+  performances: z
+    .array(
+      z.object({
+        name: z.string().min(1, "Performance name cannot be empty"),
+        performers: z.array(z.string().min(1, "Performers cannot be empty")),
+      })
+    )
+    .refine(
+      (performances) => {
+        const names = performances.map((perf) => perf.name);
+        const uniqueNames = new Set(names);
+        return names.length === uniqueNames.size;
+      },
+      {
+        message: "Duplicate performance names are not allowed.",
+        path: ["performances"], // エラーの対象を指定
+      }
+    ),
 });
 
 interface manualValues {
@@ -35,8 +48,8 @@ const ManualForm = ({
   setIsLoading,
   setResult,
 }: {
-  setIsLoading: any;
-  setResult: any;
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  setResult: React.Dispatch<React.SetStateAction<ResultData>>;
 }) => {
   const [size, setSize] = useState(3); // 初期サイズ
   const {
@@ -66,7 +79,7 @@ const ManualForm = ({
     },
   });
 
-  const handleSizeChange = (e: any) => {
+  const handleSizeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     // 空文字の場合は0を設定し、それ以外は通常通り数値を処理
     const newSize =
@@ -84,6 +97,35 @@ const ManualForm = ({
             name: "",
             performers: [""],
           };
+    });
+    setValue("performances", updatedPerfs, { shouldValidate: true });
+  };
+
+  const updateMemberName = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    performanceIndex: number
+  ) => {
+    const updatedPerformances = getValues("performances").map(
+      (performance, index) => {
+        if (index === performanceIndex) {
+          return {
+            name: performance.name,
+            performers: e.target.value.split(","),
+          };
+        }
+        return { name: performance.name, performers: performance.performers };
+      }
+    );
+    // console.log(updatedPerformances);
+    setValue("performances", updatedPerformances, { shouldValidate: true });
+  };
+
+  const handleReset = () => {
+    const updatedPerfs = Array.from({ length: size }, (_, index) => {
+      return {
+        name: "",
+        performers: [""],
+      };
     });
     setValue("performances", updatedPerfs, { shouldValidate: true });
   };
@@ -116,22 +158,6 @@ const ManualForm = ({
     );
   };
 
-  const updateMemberName = (e: any, performanceIndex: number) => {
-    const updatedPerformances = getValues("performances").map(
-      (performance, index) => {
-        if (index === performanceIndex) {
-          return {
-            name: performance.name,
-            performers: e.target.value.split(","),
-          };
-        }
-        return { name: performance.name, performers: performance.performers };
-      }
-    );
-    // console.log(updatedPerformances);
-    setValue("performances", updatedPerformances, { shouldValidate: true });
-  };
-
   return (
     <form onSubmit={handleSubmit(handleManualSubmit)}>
       <div className="mb-4">
@@ -149,9 +175,9 @@ const ManualForm = ({
         <Button type="submit" className="mt-4">
           Optimize Setlist
         </Button>
-        {/* <Button type="button" onClick={handleReset} className="mx-1">
+        <Button type="button" onClick={() => handleReset()} className="mx-1">
           Reset
-        </Button> */}
+        </Button>
       </div>
 
       {/* 演目名と出演者の入力欄 */}

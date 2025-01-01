@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { PerformanceData, ResultData } from "../types/types";
 
 // const testSchema = z.object({
 //   testNumPerformances: z.number().min(2).max(20),
@@ -25,12 +26,12 @@ const TestForm = ({
   setIsLoading,
   setResult,
 }: {
-  setIsLoading: any;
-  setResult: any;
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  setResult: React.Dispatch<React.SetStateAction<ResultData>>;
 }) => {
-  const [performances, setPerformances] = useState<
-    { name: string; performers: string[] }[]
-  >(Array(3).fill({ name: "", performers: [] }));
+  const [performances, setPerformances] = useState<PerformanceData[]>(
+    Array(3).fill({ name: "", performers: [] })
+  );
   const [testNumPerformances, setTestNumPerformances] = useState(3);
   const [testNumPerformers, setTestNumPerformers] = useState(6);
 
@@ -51,7 +52,7 @@ const TestForm = ({
 
   const generateRandomTestCase = () => {
     const performancesData = [];
-    console.log(testNumPerformances, testNumPerformers);
+    // console.log(testNumPerformances, testNumPerformers);
     const members = Array.from(
       { length: testNumPerformers },
       (_, i) => `member${i + 1}`
@@ -110,7 +111,7 @@ const TestForm = ({
           min={2}
           max={20}
           value={testNumPerformances}
-          onChange={(e: any) =>
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setTestNumPerformances(
               e.target.value === ""
                 ? 2
@@ -127,7 +128,7 @@ const TestForm = ({
           min={2}
           max={500}
           value={testNumPerformers}
-          onChange={(e: any) =>
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setTestNumPerformers(
               e.target.value === ""
                 ? 2
