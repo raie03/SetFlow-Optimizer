@@ -5,10 +5,12 @@ from app.optimizer import optimize_setlist, optimize_setlist_manual
 from openpyxl import load_workbook
 from typing import List
 import io, os
+from dotenv import load_dotenv
+load_dotenv()
 
 app = FastAPI()
 
-origins = ["http://localhost:3000",]
+origins = [os.getenv('FRONT_END_URL'),]
 
 app.add_middleware(
     CORSMiddleware,
