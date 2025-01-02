@@ -34,6 +34,22 @@ const manualSchema = z.object({
         message: "Duplicate performance names are not allowed.",
         path: ["performances"], // エラーの対象を指定
       }
+    )
+    .refine(
+      (performances) => {
+        let isSameName: boolean = false;
+        performances.map((perf) => {
+          const uniqueNames = new Set(perf.performers);
+          if (perf.performers.length !== uniqueNames.size) {
+            isSameName = true;
+          }
+        });
+        return !isSameName;
+      },
+      {
+        message: "Duplicate performancer names are not allowed.",
+        path: ["performances"], // エラーの対象を指定
+      }
     ),
 });
 

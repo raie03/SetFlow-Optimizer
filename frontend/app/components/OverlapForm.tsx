@@ -58,7 +58,7 @@ export default function OverlapForm({
   } = useForm<OverlapValues>({
     resolver: zodResolver(overlapSchema),
     defaultValues: {
-      performancesName: ["Perdormance 1", "Perdormance 2", "Perdormance 3"],
+      performancesName: ["Performance 1", "Performance 2", "Performance 3"],
       costs: [
         [0, 0, 0],
         [0, 0, 0],

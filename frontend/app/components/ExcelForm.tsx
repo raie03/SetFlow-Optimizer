@@ -14,10 +14,54 @@ import React, { useState } from "react";
 import { toast } from "sonner";
 import * as XLSX from "xlsx";
 import { PerformanceData, ResultData } from "../types/types";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const excelSchema = z.object({
+  performances: z
+    .array(
+      z.object({
+        name: z.string().min(1, "Performance name cannot be empty"),
+        performers: z.array(z.string().min(1, "Performers cannot be empty")),
+      })
+    )
+    .refine(
+      (performances) => {
+        const names = performances.map((perf) => perf.name);
+        const uniqueNames = new Set(names);
+        return names.length === uniqueNames.size;
+      },
+      {
+        message: "Duplicate performance names are not allowed.",
+        path: ["performances"], // エラーの対象を指定
+      }
+    )
+    .refine(
+      (performances) => {
+        let isSameName: boolean = false;
+        performances.map((perf) => {
+          const uniqueNames = new Set(perf.performers);
+          if (perf.performers.length !== uniqueNames.size) {
+            isSameName = true;
+          }
+        });
+        return !isSameName;
+      },
+      {
+        message: "Duplicate performancer names are not allowed.",
+        path: ["performances"], // エラーの対象を指定
+      }
+    ),
+});
 
 interface RowData {
   performance_name: string;
   performers: string;
+}
+
+interface excelValues {
+  performances: PerformanceData[];
 }
 
 const ExcelForm = ({
@@ -27,10 +71,24 @@ const ExcelForm = ({
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   setResult: React.Dispatch<React.SetStateAction<ResultData>>;
 }) => {
-  const [performances, setPerformances] = useState<PerformanceData[]>(
-    Array(3).fill({ name: "", performers: [] })
-  );
+  // const [performances, setPerformances] = useState<PerformanceData[]>(
+  //   Array(3).fill({ name: "", performers: [] })
+  // );
   const [isLoadedExcelData, setIsLoadedExcelData] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    getValues,
+    formState: { errors },
+  } = useForm<excelValues>({
+    resolver: zodResolver(excelSchema),
+    defaultValues: {
+      performances: [],
+    },
+  });
 
   // Excelファイルを処理する関数
   const handleExcelUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -49,14 +107,15 @@ const ExcelForm = ({
         name: row.performance_name, // A列
         performers: row.performers?.split(",") || [], // B列をカンマで分割
       }));
-      // console.log(performancesData);
-      setPerformances(performancesData);
+      console.log(performancesData);
+      // setPerformances(performancesData);
+      setValue("performances", performancesData, { shouldValidate: true });
       setIsLoadedExcelData(true);
     };
     reader.readAsBinaryString(file);
   };
 
-  const handleExcelSubmit = () => {
+  const handleExcelSubmit = (data: excelValues) => {
     setIsLoading(true);
     toast.promise(
       // Promise を返す非同期処理
@@ -66,7 +125,7 @@ const ExcelForm = ({
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          performances,
+          performances: data.performances,
         }),
       }).then(async (response) => {
         const data = await response.json();
@@ -85,20 +144,22 @@ const ExcelForm = ({
 
   return (
     <div>
-      <div className="mb-4">
-        <label className="block text-sm font-medium mb-2">
-          Import Excel File:
-          <Input
-            type="file"
-            accept=".xlsx, .xls"
-            onChange={handleExcelUpload}
-            className="mt-1"
-          />
-          <Button className="mt-6" onClick={handleExcelSubmit}>
-            Optimize Setlist
-          </Button>
-        </label>
-      </div>
+      <form onSubmit={handleSubmit(handleExcelSubmit)}>
+        <div className="mb-4">
+          <label className="block text-sm font-medium mb-2">
+            Import Excel File:
+            <Input
+              type="file"
+              accept=".xlsx, .xls"
+              onChange={handleExcelUpload}
+              className="mt-1"
+            />
+            <Button className="mt-6" type="submit">
+              Optimize Setlist
+            </Button>
+          </label>
+        </div>
+      </form>
 
       <div className="overflow-x-auto">
         <h3 className="mt-3 mx-5">Preview</h3>
@@ -110,7 +171,7 @@ const ExcelForm = ({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {performances.map((performance, row) => (
+            {getValues("performances").map((performance, row) => (
               <TableRow key={row}>
                 <TableCell>
                   <div className="mx-3.5 w-full overflow-auto">

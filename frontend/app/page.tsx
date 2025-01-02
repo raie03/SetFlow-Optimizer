@@ -25,20 +25,20 @@ import { ResultData } from "./types/types";
 
 const SetFlowOptimizer = () => {
   const [inputMethod, setInputMethod] = useState("overlap");
-  const [size, setSize] = useState(3);
-  const [costs, setCosts] = useState(Array(3).fill(Array(3).fill(0)));
+  // const [size, setSize] = useState(3);
+  // const [costs, setCosts] = useState(Array(3).fill(Array(3).fill(0)));
   const [result, setResult] = useState<ResultData>({
     performancesName: [""],
     overlap_costs: [],
     total_costs: [],
     detail: [],
   });
-  const [performancesName, setPerformancesName] = useState(
-    Array.from({ length: 3 }, (_, index) => `Performance ${index + 1}`)
-  );
-  const [performances, setPerformances] = useState<
-    { name: string; performers: string[] }[]
-  >(Array(3).fill({ name: "", performers: [] }));
+  // const [performancesName, setPerformancesName] = useState(
+  //   Array.from({ length: 3 }, (_, index) => `Performance ${index + 1}`)
+  // );
+  // const [performances, setPerformances] = useState<
+  //   { name: string; performers: string[] }[]
+  // >(Array(3).fill({ name: "", performers: [] }));
   const [isLoading, setIsLoading] = useState(false);
 
   // const handleReset = () => {
