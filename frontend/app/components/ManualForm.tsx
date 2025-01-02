@@ -137,7 +137,7 @@ const ManualForm = ({
   };
 
   const handleReset = () => {
-    const updatedPerfs = Array.from({ length: size }, (_unused, index) => {
+    const updatedPerfs = Array.from({ length: size }, () => {
       return {
         name: "",
         performers: [""],

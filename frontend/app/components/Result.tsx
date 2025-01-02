@@ -51,7 +51,7 @@ const Result = ({
               </TableBody>
             </Table>
 
-            {result?.detail! && (
+            {result.detail && (
               <div className="mt-3">
                 <h3 className="font-semibold mb-2">Overlap Detail</h3>
                 <Table>

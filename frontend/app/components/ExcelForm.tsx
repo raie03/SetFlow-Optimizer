@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import React, { useState } from "react";
+import React from "react";
 import { toast } from "sonner";
 import * as XLSX from "xlsx";
 import { PerformanceData, ResultData } from "../types/types";
