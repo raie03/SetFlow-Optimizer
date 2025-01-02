@@ -26,6 +26,7 @@ const excelSchema = z.object({
         performers: z.array(z.string().min(1, "Performers cannot be empty")),
       })
     )
+    .min(2)
     .refine(
       (performances) => {
         const names = performances.map((perf) => perf.name);
@@ -74,12 +75,12 @@ const ExcelForm = ({
   // const [performances, setPerformances] = useState<PerformanceData[]>(
   //   Array(3).fill({ name: "", performers: [] })
   // );
-  const [isLoadedExcelData, setIsLoadedExcelData] = useState(false);
+  // const [isLoadedExcelData, setIsLoadedExcelData] = useState(false);
 
   const {
-    register,
+    // register,
     handleSubmit,
-    watch,
+    // watch,
     setValue,
     getValues,
     formState: { errors },
@@ -110,7 +111,6 @@ const ExcelForm = ({
       console.log(performancesData);
       // setPerformances(performancesData);
       setValue("performances", performancesData, { shouldValidate: true });
-      setIsLoadedExcelData(true);
     };
     reader.readAsBinaryString(file);
   };
@@ -135,7 +135,7 @@ const ExcelForm = ({
       }),
       {
         loading: "処理を実行中...",
-        success: (data) => "処理が完了しました",
+        success: () => "処理が完了しました",
         error: "処理中にエラーが発生しました",
         position: "top-center",
       }
@@ -154,7 +154,11 @@ const ExcelForm = ({
               onChange={handleExcelUpload}
               className="mt-1"
             />
-            <Button className="mt-6" type="submit">
+            <Button
+              className="mt-6"
+              type="submit"
+              disabled={Object.keys(errors).length > 0}
+            >
               Optimize Setlist
             </Button>
           </label>

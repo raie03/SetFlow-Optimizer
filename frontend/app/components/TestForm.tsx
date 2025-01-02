@@ -12,9 +12,9 @@ import {
 } from "@/components/ui/table";
 import React, { useState } from "react";
 import { toast } from "sonner";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+// import { z } from "zod";
+// import { useForm } from "react-hook-form";
+// import { zodResolver } from "@hookform/resolvers/zod";
 import { PerformanceData, ResultData } from "../types/types";
 
 // const testSchema = z.object({
@@ -95,7 +95,7 @@ const TestForm = ({
       }),
       {
         loading: "処理を実行中...",
-        success: (data) => "処理が完了しました",
+        success: () => "処理が完了しました",
         error: "処理中にエラーが発生しました",
         position: "top-center",
       }

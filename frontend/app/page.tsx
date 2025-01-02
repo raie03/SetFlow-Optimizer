@@ -2,20 +2,20 @@
 
 import { useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+// import { Button } from "@/components/ui/button";
+// import { Input } from "@/components/ui/input";
+// import {
+//   Table,
+//   TableBody,
+//   TableCell,
+//   TableHead,
+//   TableHeader,
+//   TableRow,
+// } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsTrigger, TabsList } from "@/components/ui/tabs";
-import * as XLSX from "xlsx";
-import { toast } from "sonner";
-import LoadingSkeleton from "./components/LoadingSkeleton";
+// import * as XLSX from "xlsx";
+// import { toast } from "sonner";
+// import LoadingSkeleton from "./components/LoadingSkeleton";
 import OverlapForm from "./components/OverlapForm";
 import ManualForm from "./components/ManualForm";
 import ExcelForm from "./components/ExcelForm";
@@ -24,7 +24,7 @@ import Result from "./components/Result";
 import { ResultData } from "./types/types";
 
 const SetFlowOptimizer = () => {
-  const [inputMethod, setInputMethod] = useState("overlap");
+  // const [inputMethod, setInputMethod] = useState("overlap");
   // const [size, setSize] = useState(3);
   // const [costs, setCosts] = useState(Array(3).fill(Array(3).fill(0)));
   const [result, setResult] = useState<ResultData>({
@@ -61,23 +61,26 @@ const SetFlowOptimizer = () => {
             <TabsList className="mb-4">
               <TabsTrigger
                 value="overlap"
-                onClick={() => setInputMethod("overlap")}
+                // onClick={() => setInputMethod("overlap")}
               >
                 演目名と被り数
               </TabsTrigger>
               <TabsTrigger
                 value="manual"
-                onClick={() => setInputMethod("manual")}
+                // onClick={() => setInputMethod("manual")}
               >
                 演目名と出演者
               </TabsTrigger>
               <TabsTrigger
                 value="excel"
-                onClick={() => setInputMethod("excel")}
+                // onClick={() => setInputMethod("excel")}
               >
                 Excelアップロード
               </TabsTrigger>
-              <TabsTrigger value="test" onClick={() => setInputMethod("test")}>
+              <TabsTrigger
+                value="test"
+                // onClick={() => setInputMethod("test")}
+              >
                 テスト
               </TabsTrigger>
             </TabsList>

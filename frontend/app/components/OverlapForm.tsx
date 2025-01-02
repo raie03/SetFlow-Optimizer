@@ -67,8 +67,8 @@ export default function OverlapForm({
     },
   });
 
-  const costsData = watch("costs");
-  const performancesNameData = watch("performancesName");
+  watch("costs");
+  watch("performancesName");
 
   const handleCostChange = (row: number, col: number, value: number) => {
     // 現在の値を更新
@@ -145,7 +145,7 @@ export default function OverlapForm({
       }),
       {
         loading: "処理を実行中...",
-        success: (perfData) => "処理が完了しました",
+        success: () => "処理が完了しました",
         error: "処理中にエラーが発生しました",
         position: "top-center",
       }
@@ -172,6 +172,14 @@ export default function OverlapForm({
         <Button type="button" onClick={() => handleReset()} className="mx-1">
           Reset
         </Button>
+        {errors.performancesName && (
+          <p className="text-red-500 text-sm">
+            {errors.performancesName.message}
+          </p>
+        )}
+        {errors.costs && (
+          <p className="text-red-500 text-sm">{errors.costs.message}</p>
+        )}
       </div>
 
       <div className="overflow-x-auto">

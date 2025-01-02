@@ -71,7 +71,7 @@ const ManualForm = ({
   const {
     register,
     handleSubmit,
-    watch,
+    // watch,
     setValue,
     getValues,
     formState: { errors },
@@ -137,7 +137,7 @@ const ManualForm = ({
   };
 
   const handleReset = () => {
-    const updatedPerfs = Array.from({ length: size }, (_, index) => {
+    const updatedPerfs = Array.from({ length: size }, (_unused, index) => {
       return {
         name: "",
         performers: [""],
@@ -167,7 +167,7 @@ const ManualForm = ({
       }),
       {
         loading: "処理を実行中...",
-        success: (data) => "処理が完了しました",
+        success: () => "処理が完了しました",
         error: "処理中にエラーが発生しました",
         position: "top-center",
       }
@@ -194,6 +194,9 @@ const ManualForm = ({
         <Button type="button" onClick={() => handleReset()} className="mx-1">
           Reset
         </Button>
+        {errors.performances && (
+          <p className="text-red-500 text-sm">{errors.performances.message}</p>
+        )}
       </div>
 
       {/* 演目名と出演者の入力欄 */}

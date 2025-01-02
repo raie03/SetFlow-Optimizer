@@ -3,8 +3,22 @@ import React from "react";
 import { ResultData } from "../types/types";
 import * as XLSX from "xlsx";
 
+interface perfData {
+  Order: number;
+  "Performance Name": string;
+  "Overlap Cost": number;
+  "Total Cost": number;
+}
+interface detailData {
+  From: string;
+  To: string;
+  "Overlapping Members": string;
+}
+
 const ExportResultToExcel = ({ result }: { result: ResultData }) => {
-  const adjustColumnWidths = (data: any[]): { wch: number }[] => {
+  const adjustColumnWidths = (
+    data: perfData[] | detailData[]
+  ): { wch: number }[] => {
     if (data.length === 0) return [];
 
     const headers = Object.keys(data[0]);
@@ -34,19 +48,22 @@ const ExportResultToExcel = ({ result }: { result: ResultData }) => {
     const performancesSheet = XLSX.utils.json_to_sheet(performancesData);
     performancesSheet["!cols"] = adjustColumnWidths(performancesData);
 
-    // Detail シート
-    const detailData = data.detail.map((detail) => ({
-      From: detail.from_performance,
-      To: detail.to_performance,
-      "Overlapping Members": detail.overlapping_members.join(", "),
-    }));
-    const detailSheet = XLSX.utils.json_to_sheet(detailData);
-    detailSheet["!cols"] = adjustColumnWidths(detailData);
-
     // ワークブックにシートを追加
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, performancesSheet, "Performances");
-    XLSX.utils.book_append_sheet(workbook, detailSheet, "Details");
+
+    // Detail シート
+    if (data.detail) {
+      const detailData = data.detail.map((detail) => ({
+        From: detail.from_performance,
+        To: detail.to_performance,
+        "Overlapping Members": detail.overlapping_members.join(", "),
+      }));
+      const detailSheet = XLSX.utils.json_to_sheet(detailData);
+      detailSheet["!cols"] = adjustColumnWidths(detailData);
+
+      XLSX.utils.book_append_sheet(workbook, detailSheet, "Details");
+    }
 
     // ファイルを保存
     XLSX.writeFile(workbook, "ResultData.xlsx");
