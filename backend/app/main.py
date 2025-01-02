@@ -44,5 +44,3 @@ async def optimize_manual(request: OptimizationManualRequest):
         )
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
-
-# @app.post("/api/optimize/xlsx")

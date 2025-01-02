@@ -9,6 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { PerformanceDetail, ResultData } from "../types/types";
+import ExportResultToExcel from "./ExportResultToExcel";
 
 const Result = ({
   isLoading,
@@ -22,9 +23,10 @@ const Result = ({
       {isLoading ? (
         <LoadingSkeleton />
       ) : (
-        result && (
+        result.performancesName[0] !== "" && (
           <div className="mt-8">
             <h3 className="text-lg font-semibold mb-4">Optimal Setlist:</h3>
+            <ExportResultToExcel result={result} />
             <Table>
               <TableHeader>
                 <TableRow>
