@@ -178,7 +178,7 @@ const ManualForm = ({
     <form onSubmit={handleSubmit(handleManualSubmit)}>
       <div className="mb-4">
         <label className="block text-sm font-medium mb-2">
-          Number of Performances:
+          演目数:
           <Input
             type="number"
             min="2"
@@ -189,10 +189,10 @@ const ManualForm = ({
           />
         </label>
         <Button type="submit" className="mt-4">
-          Optimize Setlist
+          セットリスト最適化
         </Button>
         <Button type="button" onClick={() => handleReset()} className="mx-1">
-          Reset
+          リセット
         </Button>
         {errors.performances && (
           <p className="text-red-500 text-sm">{errors.performances.message}</p>
@@ -204,8 +204,8 @@ const ManualForm = ({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Performance Name</TableHead>
-              <TableHead>Performers</TableHead>
+              <TableHead>演目名</TableHead>
+              <TableHead>出演者(,区切りで入力してください)</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -226,7 +226,7 @@ const ManualForm = ({
                   <Input
                     type="text"
                     value={performance.performers}
-                    placeholder="Member Name"
+                    placeholder="Member 1,Menber 2,Member 3,..."
                     onChange={(e) => updateMemberName(e, row)}
                     className="w-full"
                   />

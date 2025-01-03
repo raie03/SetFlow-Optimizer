@@ -74,7 +74,7 @@ const ExportResultToExcel = ({ result }: { result: ResultData }) => {
         onClick={() => exportResultDataToExcel(result)}
         className="mt-1 mb-2"
       >
-        Export Result to Excel file
+        Excelファイルに書き出す
       </Button>
     </div>
   );

@@ -58,7 +58,7 @@ export default function OverlapForm({
   } = useForm<OverlapValues>({
     resolver: zodResolver(overlapSchema),
     defaultValues: {
-      performancesName: ["Performance 1", "Performance 2", "Performance 3"],
+      performancesName: ["", "", ""],
       costs: [
         [0, 0, 0],
         [0, 0, 0],
@@ -100,9 +100,7 @@ export default function OverlapForm({
     const currentPerformancesName: string[] = getValues("performancesName");
     const updatedPerformancesName = currentPerformancesName.slice(0, newSize);
     while (updatedPerformancesName.length < newSize) {
-      updatedPerformancesName.push(
-        `Performance ${updatedPerformancesName.length + 1}`
-      );
+      updatedPerformancesName.push("");
     }
     // console.log(updatedPerformancesName);
     setValue("performancesName", updatedPerformancesName, {
@@ -156,7 +154,7 @@ export default function OverlapForm({
     <form onSubmit={handleSubmit(handleOverlapSubmit)}>
       <div className="mb-4">
         <label className="block text-sm font-medium mb-2">
-          Number of Performances:
+          演目数:
           <Input
             type="number"
             min="2"
@@ -167,10 +165,10 @@ export default function OverlapForm({
           />
         </label>
         <Button type="submit" className="mt-4">
-          Optimize Setlist
+          セットリスト最適化
         </Button>
         <Button type="button" onClick={() => handleReset()} className="mx-1">
-          Reset
+          リセット
         </Button>
         {errors.performancesName && (
           <p className="text-red-500 text-sm">
@@ -186,10 +184,12 @@ export default function OverlapForm({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>From / To</TableHead>
+              <TableHead>現在の演目 / 次の演目</TableHead>
               {[...Array(size)].map((_, i) => (
                 <TableHead key={i} className="w-auto">
-                  {getValues(`performancesName.${i}`)}
+                  {getValues(`performancesName.${i}`)
+                    ? getValues(`performancesName.${i}`)
+                    : `Performance ${i + 1} Name`}
                 </TableHead>
               ))}
             </TableRow>
@@ -201,6 +201,7 @@ export default function OverlapForm({
                   <Input
                     type="text"
                     {...register(`performancesName.${row}`)}
+                    placeholder={`Performance ${row + 1} Name`}
                     value={getValues(`performancesName.${row}`)}
                     // onChange={(e) => handlePerformancesNameChange(e, row)}
                     className="w-auto"

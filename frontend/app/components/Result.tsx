@@ -25,15 +25,15 @@ const Result = ({
       ) : (
         result.performancesName[0] !== "" && (
           <div className="mt-8">
-            <h3 className="text-lg font-semibold mb-4">Optimal Setlist:</h3>
+            <h3 className="text-lg font-semibold mb-4">セットリスト:</h3>
             <ExportResultToExcel result={result} />
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Order</TableHead>
-                  <TableHead>Performance</TableHead>
-                  <TableHead>Overlap Cost</TableHead>
-                  <TableHead>Total Cost</TableHead>
+                  <TableHead>順番</TableHead>
+                  <TableHead>演目名</TableHead>
+                  <TableHead>連続出演人数</TableHead>
+                  <TableHead>合計連続出演人数</TableHead>
                   {/* {result.detail && <TableHead>Detail</TableHead>} */}
                 </TableRow>
               </TableHeader>
@@ -53,12 +53,12 @@ const Result = ({
 
             {result.detail && (
               <div className="mt-3">
-                <h3 className="font-semibold mb-2">Overlap Detail</h3>
+                <h3 className="font-semibold mb-2">詳細:</h3>
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>From → To</TableHead>
-                      <TableHead>Overlaping Members</TableHead>
+                      <TableHead>現在の演目 → 次の演目</TableHead>
+                      <TableHead>連続出演者名</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>

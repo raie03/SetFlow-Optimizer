@@ -105,7 +105,7 @@ const TestForm = ({
   return (
     <div className="mb-4">
       <label className="block text-sm font-medium mb-2">
-        Number of Performances:
+        演目数:
         <Input
           type="number"
           min={2}
@@ -122,7 +122,7 @@ const TestForm = ({
         />
       </label>
       <label className="block text-sm font-medium mb-2">
-        Number of Performers:
+        出演者数:
         <Input
           type="number"
           min={2}
@@ -140,20 +140,20 @@ const TestForm = ({
       </label>
 
       <Button className="mt-4" onClick={generateRandomTestCase}>
-        Generate Random Test Case
+        テストケース生成
       </Button>
 
       <Button className="mt-4 mx-1" onClick={handleTestSubmit}>
-        Optimize Setlist
+        セットリスト最適化
       </Button>
 
       <div className="overflow-x-auto">
-        <h3 className="mt-3 mx-5">Preview</h3>
+        <h3 className="mt-3">プレビュー:</h3>
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Performance Name</TableHead>
-              <TableHead>Performers</TableHead>
+              <TableHead>演目名</TableHead>
+              <TableHead>出演者</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

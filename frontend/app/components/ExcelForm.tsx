@@ -147,7 +147,7 @@ const ExcelForm = ({
       <form onSubmit={handleSubmit(handleExcelSubmit)}>
         <div className="mb-4">
           <label className="block text-sm font-medium mb-2">
-            Import Excel File:
+            エクセルファイルを読み込む:
             <Input
               type="file"
               accept=".xlsx, .xls"
@@ -159,19 +159,19 @@ const ExcelForm = ({
               type="submit"
               disabled={Object.keys(errors).length > 0}
             >
-              Optimize Setlist
+              セットリスト最適化
             </Button>
           </label>
         </div>
       </form>
 
       <div className="overflow-x-auto">
-        <h3 className="mt-3 mx-5">Preview</h3>
+        <h3 className="mt-3">プレビュー</h3>
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Performance Name</TableHead>
-              <TableHead>Performers</TableHead>
+              <TableHead>演目名</TableHead>
+              <TableHead>出演者</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
