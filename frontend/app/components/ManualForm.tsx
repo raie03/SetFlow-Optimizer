@@ -48,7 +48,7 @@ const manualSchema = z.object({
       },
       {
         message: "Duplicate performancer names are not allowed.",
-        path: ["performances"], // エラーの対象を指定
+        path: ["performances.performers"], // エラーの対象を指定
       }
     ),
 });
@@ -148,7 +148,7 @@ const ManualForm = ({
 
   const handleManualSubmit = (data: manualValues) => {
     setIsLoading(true);
-    console.log(data);
+    // console.log(data);
     toast.promise(
       // Promise を返す非同期処理
       fetch(`${process.env.NEXT_PUBLIC_API_URL}/manual`, {
@@ -194,9 +194,9 @@ const ManualForm = ({
         <Button type="button" onClick={() => handleReset()} className="mx-1">
           リセット
         </Button>
-        {errors.performances && (
+        {/* {errors.performances && (
           <p className="text-red-500 text-sm">{errors.performances.message}</p>
-        )}
+        )} */}
       </div>
 
       {/* 演目名と出演者の入力欄 */}
@@ -219,17 +219,45 @@ const ManualForm = ({
                     // value={getValues(`performances.${row}.name`)}
                     placeholder={`Performance ${row + 1} Name`}
                     // onChange={(e) => handlePerformancesNameChange(e, row)}
-                    className="w-full"
+                    className={`w-auto ${
+                      errors.performances?.[row]?.name
+                        ? "border-red-500"
+                        : "border-gray-300"
+                    }`}
                   />
+                  {/* エラーメッセージを表示 */}
+                  {/* {errors.performances?.[row]?.name && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.performances[row].name.message}
+                    </p>
+                  )} */}
                 </TableCell>
                 <TableCell>
                   <Input
                     type="text"
                     value={performance.performers}
                     placeholder="Member 1,Menber 2,Member 3,..."
-                    onChange={(e) => updateMemberName(e, row)}
-                    className="w-full"
+                    // onChange={(e) => updateMemberName(e, row)}
+                    onChange={(e) => {
+                      const performers = e.target.value
+                        .split(",")
+                        .map((name) => name);
+                      setValue(`performances.${row}.performers`, performers, {
+                        shouldValidate: true, // バリデーションをトリガー
+                      });
+                    }}
+                    className={`w-full ${
+                      errors.performances?.[row]?.performers
+                        ? "border-red-500"
+                        : "border-gray-300"
+                    }`}
                   />
+                  {/* エラーメッセージを表示 */}
+                  {/* {errors.performances?.[row]?.performers && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.performances[row].performers.message}
+                    </p>
+                  )} */}
                 </TableCell>
               </TableRow>
             ))}

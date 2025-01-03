@@ -113,10 +113,7 @@ export default function OverlapForm({
     const updatedCosts = Array(size).fill(Array(size).fill(0));
     setValue("costs", updatedCosts, { shouldValidate: true });
 
-    const updatedPerformancesName = Array.from(
-      { length: size },
-      (_, index) => `Performance ${index + 1}`
-    );
+    const updatedPerformancesName = Array.from({ length: size }, (_) => "");
     setValue("performancesName", updatedPerformancesName, {
       shouldValidate: true,
     });
@@ -204,7 +201,12 @@ export default function OverlapForm({
                     placeholder={`Performance ${row + 1} Name`}
                     value={getValues(`performancesName.${row}`)}
                     // onChange={(e) => handlePerformancesNameChange(e, row)}
-                    className="w-auto"
+                    // className="w-auto"
+                    className={`w-auto ${
+                      errors.performancesName?.[row]
+                        ? "border-red-500"
+                        : "border-gray-300"
+                    }`}
                   />
                   {/* {errors.performancesName?.[row] && (
                     <p className="text-red-500 text-sm">
