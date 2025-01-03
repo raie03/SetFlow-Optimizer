@@ -117,24 +117,24 @@ const ManualForm = ({
     setValue("performances", updatedPerfs, { shouldValidate: true });
   };
 
-  const updateMemberName = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    performanceIndex: number
-  ) => {
-    const updatedPerformances = getValues("performances").map(
-      (performance, index) => {
-        if (index === performanceIndex) {
-          return {
-            name: performance.name,
-            performers: e.target.value.split(","),
-          };
-        }
-        return { name: performance.name, performers: performance.performers };
-      }
-    );
-    // console.log(updatedPerformances);
-    setValue("performances", updatedPerformances, { shouldValidate: true });
-  };
+  // const updateMemberName = (
+  //   e: React.ChangeEvent<HTMLInputElement>,
+  //   performanceIndex: number
+  // ) => {
+  //   const updatedPerformances = getValues("performances").map(
+  //     (performance, index) => {
+  //       if (index === performanceIndex) {
+  //         return {
+  //           name: performance.name,
+  //           performers: e.target.value.split(","),
+  //         };
+  //       }
+  //       return { name: performance.name, performers: performance.performers };
+  //     }
+  //   );
+  //   // console.log(updatedPerformances);
+  //   setValue("performances", updatedPerformances, { shouldValidate: true });
+  // };
 
   const handleReset = () => {
     const updatedPerfs = Array.from({ length: size }, () => {

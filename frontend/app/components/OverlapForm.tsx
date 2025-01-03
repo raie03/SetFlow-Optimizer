@@ -113,7 +113,7 @@ export default function OverlapForm({
     const updatedCosts = Array(size).fill(Array(size).fill(0));
     setValue("costs", updatedCosts, { shouldValidate: true });
 
-    const updatedPerformancesName = Array.from({ length: size }, (_) => "");
+    const updatedPerformancesName = Array.from({ length: size }, () => "");
     setValue("performancesName", updatedPerformancesName, {
       shouldValidate: true,
     });
